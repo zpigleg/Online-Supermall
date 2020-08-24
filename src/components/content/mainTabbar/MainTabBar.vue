@@ -18,7 +18,7 @@
       <div slot="item-text">购物车</div>
     </tab-bar-item>
 
-    <tab-bar-item path="/login">
+    <tab-bar-item path="/profile">
       <img slot="item-icon" src="@/assets/image/tabbar/me.png"alt="">
       <img slot="item-icon-active" src="@/assets/image/tabbar/me_active.png"alt="">
       <div slot="item-text">我的</div>

@@ -1,76 +1,133 @@
 <template>
-  <div class="login">
-    <div class="login-shift">
-      <span id="tel">手机验证码登录</span>
-      <span id="account">账号登录</span>
-    </div>
-    <div class="message-login">
+  <div id="login">
+    <div class="login-panel">
+      <img src=""/>
+      <!--手机号-->
+      <login-form class="phone-number"
+                  type="number"
+                  v-model="phoneNumber"
+                  :placeholder="placeholder"
+                  :btn-title="btnTitle"
+                  :verify-code-btn-active="verifyCodeBtnActive"
+                  :error="errors.phoneNumber"
+                  @btnClick="getVerifyCode"></login-form>
 
-      <div>
-        <span>手机号</span>
-        <input v-model="tel_number" class="login_text" type="text" placeholder="请输入手机号码">
-      </div>
-      <div class="send-verify-code-btn">
-        <span>发送验证码</span>
-      </div>
-      <input v-model="verify_code" class="login_text" type="text" placeholder="六位验证码"/>
+      <!--验证码-->
+      <login-form class="verify-code" type="number" v-model="verifyCode" placeholder="接收验证码" :error="errors.code"></login-form>
 
-    </div>
-    <div class="account-login" v-show="">
-      <div>
-        <input  v-model="username" class="login_text" type="text" placeholder="用户名/手机号/E-mail">
+      <!--用户服务协议-->
+      <div class="login_desc">
+        <p>
+          新用户登录即自动注册，表示同意
+          <span>《用户服务协议》</span>
+        </p>
       </div>
-      <div>
-        <input v-model="password" class="login_text" type="text" placeholder="请输入您的密码">
-      </div>
+      <!--登录按钮-->
       <div class="login_btn">
-        <input type="submit" value="登录" @touchstart="handleToLogin">
-      </div>
-      <div class="login_link">
-        <router-link to="" href="#">立即注册</router-link>
-        <a href="#">找回密码</a>
+        <button>登录</button>
       </div>
     </div>
-    <div></div>
   </div>
 </template>
 
 <script>
+  import LoginForm from '@/components/content/loginform/LoginForm';
   export default {
     name: "LogIn",
+    components:{
+      LoginForm
+    },
     data(){
       return{
-        tel_number:'',
-        verify_code:'',
-        username:'',
-        password:''
+        placeholder:"请输入手机号",
+        phoneNumber:"",
+        verifyCode:"",
+        errors:{},
+        btnTitle:"验证码",
+        verifyCodeBtnActive: false
+
       }
     },
     methods:{
-      handleToLogin(){
-        this.axios.post('',{
-          username: this.username,
-          password: this.password
-        })
+      getVerifyCode(){
+        if (this.validatePhoneNumber()){
+          //发送网络请求
+          this.validateBtn();
+        }
+      },
+      validatePhoneNumber(){
+        if (!this.phoneNumber){
+          this.errors ={
+            phoneNumber:"手机号码不能为空"
+          };
+          return false;
+        }else if (!/^1[345678]\d{9}$/.test(this.phoneNumber)){
+          this.errors = {
+            phoneNumber:"请填写正确的手机号码"
+          };
+          return false;
+        }else {
+          this.errors = {};
+          return true;
+        }
+      },
 
+      validateBtn(){
+        let time = 60;
+        let timer = setInterval(() =>{
+          if (time == 0){
+            clearInterval(timer);
+            this.btnTitle = time + "获取验证码";
+            this.disabled = false;
+          } else {
+            //倒计时
+            this.btnTitle = time + "秒后重试";
+          }
+        })
       }
     }
   }
 </script>
 
 <style scoped>
-  .login{
+  #login{
+    position: relative;
+    height: 100vh;
+    z-index: 9;
+    background-color: #fff;
+  }
+  .login-panel{
+    margin-top: 50%;
+    height: auto;
+  }
+  .phone-number{
+    margin-top: 5px;
+  }
+  .verify-code{
+    margin:auto;
+    margin-top: 20px;
+  }
+  .login_desc{
+    margin-top:20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .login_desc span{
+    display:block;
+    margin: auto;
+  }
+  .login_btn button{
+    display: block;
+    height: 30px;
+    margin:auto;
+    width: 80%;
+    background-color: #43C333;
+    color: #fff;
+    border-radius: 3px;
+    border: none;
+  }
 
-  }
-  .login-shift{
-    display: inline-block;
-    margin-bottom: 5px;
-  }
-  .login-shift span{
-    border: 1px solid #aaa ;
-    background-color: rgba(0,0,0,.2);
-    border-radius: 2px;
-  }
+
 
 
 
