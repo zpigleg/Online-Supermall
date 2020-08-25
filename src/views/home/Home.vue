@@ -111,7 +111,6 @@
       * 事件监听相关方法
       */
 
-      /*防抖函数起作用的过程*/
       tabClick(index){
         switch (index) {
           case 0:
